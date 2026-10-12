@@ -47,7 +47,7 @@ verify takes a resolver interface, so tests use a fake DNS instead of the real o
 
 1. Many lines need DNS. Some bots don't publish ranges. I will reverse DNS lookup and cache the result per IP, because a big log has the same bot IPs on thousands of lines.
 2. **DNS is slow or hangs.** A lookup can take a long time, I will set a timer for each lookup, and when it runs out the answer is couldn't check (timeout or error). Open: how long the timeout is (slice 4).
-3. **Published ranges go stale.** Bots add new IPs, and old ranges would mark real bots as spoofed (mistake B). the server refreshes the ranges with a ticker goroutines and the CLI ftches them at the startup, if the fetch fails, the CLI uses the cache file and shows its age, on the first run with no file, it exits with that error. 
+3. **Published ranges go stale.** Bots add new IPs, and old ranges would mark real bots as spoofed (mistake B). the server refreshes the ranges with a ticker goroutines and the CLI ftches them at the startup, if the fetch fails, the CLI uses the cache file and shows its age, on the first run with no file, it exits with that error. refetch the ranges daily and keep the last-known-good list if a fetch fails or looks wrong(an error, an empty list or much smaller than before). the age of the ranges is shown in the report and on `/health`, and becomes a loud problem after 7 days 
 4. **If short on time:** concurrency (slice 5) is cut first, because the report still works sequentially thanks to the per-IP cache. Milestone 3 then moves to rung 4. **At 10× load** (1M lines, 10× the distinct IPs), DNS round trips are the first thing to break, and concurrency stops being optional.
 
 ## How we'll know it works
