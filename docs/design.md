@@ -6,7 +6,10 @@ the user can't tell whether the request come from a real bot or from scraper, a 
 ## Goals
 from an nginx access log:
 1. a count of requests per bot, verified or spoofed.
-    - GPTBot, ClaudeBot.
+    - v1 supports three bots:
+      - GPTBot: verified against OpenAI's published IP ranges.
+      - ClaudeBot: verified against Anthropic's published IP ranges (https://claude.com/crawling/bots.json).
+      - YandexBot: Yandex publishes no IP ranges, so it is verified by reverse DNS with forward-confirm; the hostname must end in yandex.ru, yandex.net or yandex.com (https://yandex.com/support/webmaster/robot-workings/check-yandex-robots.html).
 
 from one IP + User-agent over HTTP:
 2. Whether it's a real bot, spoofed, couldn't check (timeout or error) and doesn't claim to be a known bot.
